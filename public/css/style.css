@@ -1,0 +1,187 @@
+
+.navbar {
+    height: 70px;
+    width: 100%;
+}
+
+.navbar-toggler {
+    margin-left: 20px;
+}
+
+.navbar-brand {
+    margin-left: 15px;
+}
+
+.bi-bag {
+    margin-right: 10px;
+}
+
+.bi-heart {
+    margin-top: 5px;
+    margin-right: 15px;
+}
+
+.search {
+    margin-right: 15px;
+}
+
+
+.women {
+    margin-left: 15px;
+}
+
+.child {
+    margin-left: 15px;
+}
+
+.news-head {
+    margin-right: 15px;
+}
+
+.item-style-1 {
+    position: absolute;
+    margin-left: 800px;
+    margin-top: -8px;
+}
+
+.item-style-2 {
+    position: absolute;
+    margin-left: 900px;
+    margin-top: -8px;
+}
+
+.text-slide-1 {
+    font-size: 50px;
+    color: black;
+    background-color: aqua;
+}
+
+.text-2-slide-1 {
+    font-size: 20px;
+    background-color: aqua;
+}
+
+
+
+/* Style for New collection for brand*/
+
+.container-b {
+    width: 100%;
+    height: 500px;
+}
+
+.bg-style {
+    background-color: #f9f0d0;
+}
+
+.img-new {
+    width: 400px;
+    height: 350px;
+    margin-top: 50px;
+    margin-left: 200px;
+}
+
+.text-1-container-b {
+    margin-right: 300px;
+    position: relative;
+    top: 30px;
+}
+
+.text-2-container-b {
+    margin-top: 100px;
+    position: absolute;
+    width: 420px;
+    margin-left: 770px;
+   
+}
+
+.text-3-container-b {
+    position: absolute;
+    width: 420px;
+    margin-left: 770px;
+    margin-top: 260px;
+}
+
+.btn-1 {
+    position: absolute;
+    margin-top: 53px;
+    margin-left: -135px;
+    width: 140px;
+    height: 38px;
+
+}
+
+.btn-2 {
+margin-top: 30px;
+}
+
+/* Style for card */
+
+.card-img-top {
+    width: 200px;
+    height: 300px;
+    object-fit: cover;
+}
+
+.card-body {
+    width: 100%;
+    height: auto;
+}
+
+.card-text-1 {
+    font-size: 14px;
+    
+}
+
+.vr {
+    display: inline-block;
+    margin-left: 3px;
+    margin-right: 3px;
+    vertical-align: middle; /* Дозволяє центрувати лінію відносно тексту */;
+}
+
+.color {
+    width: 15px;
+    height: 15px;
+}
+
+.color-flex {
+    display: flex;
+}
+
+.price {
+    position: absolute;
+    margin-top: -10px;
+    font-size: 15px;
+}
+
+.bi-heart-card {
+    margin-left: 7px;
+}
+
+.bi-bag-card {
+    margin-top: -5px;
+    margin-right: -5px;
+}
+
+/* Footer */
+
+.bottom {
+    height: 150px;
+}
+
+.about {
+    margin-left: 10px;
+}
+
+.delivery {
+    margin-left: 20px;
+}
+
+.return {
+    margin-left: 20px;
+}
+
+.policy {
+    margin-left: 20px;
+}
