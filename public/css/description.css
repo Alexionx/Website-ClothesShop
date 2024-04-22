@@ -1,0 +1,38 @@
+body {
+    height: 1500px;
+}
+
+#carouselExample {
+    width: 30%; 
+    margin-top: 70px;
+    margin-left: 150px;
+  }
+
+  .carousel-item img {
+    width: 30%; 
+  }
+
+.name {
+    margin-left: 900px;
+    margin-top: -600px;
+}
+
+.description {
+    margin-left: 850px;
+    margin-top: 50px;
+}
+
+.description-text {
+    width: 500px;
+    text-align: justify;
+}
+
+.btn-basket {
+    margin-top: px;
+    margin-bottom: 20px;
+}
+
+
+
+
+
