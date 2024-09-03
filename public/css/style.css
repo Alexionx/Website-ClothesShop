@@ -185,3 +185,28 @@ margin-top: 30px;
 .policy {
     margin-left: 20px;
 }
+
+/* Adaptive Design */
+
+@media (max-width: 430px) {
+    body {
+        max-width: 430px;
+    }
+
+    .navbar {
+        width: 320px;
+        height: 50px;
+    }
+
+    .navbar-brand {
+        display: none;
+    }
+
+    input.form-control {
+        display: none;
+    }
+
+    button.btn.btn-light {
+        display: none;
+    }
+}
