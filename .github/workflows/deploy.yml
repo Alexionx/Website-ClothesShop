@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to AWS EC2
 
 on:
   push:
@@ -13,26 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
       with:
-        node-version: '14'
-
-    - name: Install dependencies
-      run: npm install
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
     - name: Deploy to EC2
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: 'us-east-1c'
-        EC2_INSTANCE_ID: 'i-01c3ea3af76ccd4c4'
       run: |
-        zip -r my-app.zip .
-        aws s3 cp my-app.zip s3://your-s3-bucket/
-        aws ssm send-command \
-          --document-name "AWS-RunShellScript" \
-          --targets "Key=instanceids,Values=${{ env.EC2_INSTANCE_ID }}" \
-          --parameters 'commands=["aws s3 cp s3://your-s3-bucket/my-app.zip /home/ec2-user/my-app.zip", "unzip -o /home/ec2-user/my-app.zip -d /home/ec2-user/my-app", "cd /home/ec2-user/my-app", "npm install", "pm2 restart all"]' \
-          --region ${{ env.AWS_REGION }}
+        ssh -o StrictHostKeyChecking=no ec2-user@34.238.233.79 'cd /home/ec2-user/Website-ClothesShop && git pull && npm install && pkill node && nohup node app.js > output.log 2>&1 &'
+
 
