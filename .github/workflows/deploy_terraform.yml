@@ -23,9 +23,11 @@ jobs:
 
     - name: Initialize Terraform
       run: terraform init
+      working-directory: ./terraform  # вказали директорію, де знаходяться файли tf
 
     - name: Apply Terraform configuration
       run: terraform apply -auto-approve
+      working-directory: ./terraform  # вказали директорію, де знаходяться файли tf
 
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
