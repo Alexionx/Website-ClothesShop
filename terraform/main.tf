@@ -34,7 +34,7 @@ output "ec2_public_ip" {
 
 # налаштування security group
 resource "aws_security_group" "app_sg" {
-  name        = "app_security_group"
+  name        = "new_app_security_group"
   description = "Security group for EC2 app"
 
   ingress {

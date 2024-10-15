@@ -44,14 +44,14 @@ jobs:
 
     - name: Copy Nginx configuration
       run: |
-        export EC2_PUBLIC_IP=${{ steps.get_ip.outputs.ec2_public_ip }}
+        export EC2_PUBLIC_IP=${{ env.EC2_PUBLIC_IP }}
         envsubst < nginx.conf.template > nginx.conf
         scp -o StrictHostKeyChecking=no -i /Users/sashamelnyk/Desktop/aws/devops-practice-test-key.pem nginx.conf ec2-user@$EC2_PUBLIC_IP:/etc/nginx/conf.d/website.conf
         ssh -o StrictHostKeyChecking=no ec2-user@$EC2_PUBLIC_IP 'sudo nginx -t && sudo systemctl restart nginx'
 
     - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ec2-user@${{  steps.get_ip.outputs.ec2_public_ip }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
         cd /home/ec2-user/Website-ClothesShop
         git pull
         npm install
