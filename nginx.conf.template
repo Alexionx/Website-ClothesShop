@@ -1,0 +1,32 @@
+server {
+    listen 80;
+    server_name ${EC2_PUBLIC_IP};  # Тут можна вказати змінну з IP, якщо є можливість
+
+    location / {
+        proxy_pass http://localhost:3000;  # Ваш Node.js додаток працює на цьому порту
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+
+        # Додаткові заголовки для безпеки (опційно)
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+     # Статичні файли (CSS, JS, зображення) з папки 'public'
+    location /public/ {
+        alias /home/ec2-user/Website-ClothesShop/public/;  # Шлях до папки 'public' на сервері
+        access_log off;
+        expires max;
+    }
+
+    # ejs шаблони папки views
+    location /views/ {
+        alias /home/ec2-user/Website-ClothesShop/views/;  # Шлях до папки 'views'
+        autoindex on;
+    }
+
+}
