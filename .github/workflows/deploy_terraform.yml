@@ -42,25 +42,22 @@ jobs:
 
     - name: Copy Nginx configuration
       run: |
-          export EC2_PUBLIC_IP=${{ steps.get_ip.outputs.ec2_public_ip }}
-          envsubst < nginx.conf.template > nginx.conf
-          scp -o StrictHostKeyChecking=no -i /Users/sashamelnyk/Desktop/aws/devops-practice-test-key.pem nginx.conf ec2-user@${{ steps.get_ip.outputs.ec2_public_ip }}:/etc/nginx/conf.d/website.conf
-          ssh -o StrictHostKeyChecking=no ec2-user@$EC2_PUBLIC_IP 'sudo nginx -t && sudo systemctl restart nginx'
+        export EC2_PUBLIC_IP=${{ steps.get_ip.outputs.ec2_public_ip }}
+        envsubst < nginx.conf.template > nginx.conf
+        scp -o StrictHostKeyChecking=no -i /Users/sashamelnyk/Desktop/aws/devops-practice-test-key.pem nginx.conf ec2-user@$EC2_PUBLIC_IP:/etc/nginx/conf.d/website.conf
+        ssh -o StrictHostKeyChecking=no ec2-user@$EC2_PUBLIC_IP 'sudo nginx -t && sudo systemctl restart nginx'
 
     - name: Deploy to EC2
       run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{  steps.get_ip.outputs.ec2_public_ip }} << 'EOF'
-          cd /home/ec2-user/Website-ClothesShop
-          git pull
-          npm install
+        ssh -o StrictHostKeyChecking=no ec2-user@${{  steps.get_ip.outputs.ec2_public_ip }} << 'EOF'
+        cd /home/ec2-user/Website-ClothesShop
+        git pull
+        npm install
 
-          # Перевіряємо Nginx конфігурацію
-          sudo nginx -t
+        sudo nginx -t
 
-          # Перезапускаємо Nginx
-          sudo systemctl restart nginx
+        sudo systemctl restart nginx
 
-          # Перезапускаємо додаток через Nginx
-          pkill node
-          nohup node app.js > output.log 2>&1 &
+        pkill node
+        nohup node app.js > output.log 2>&1 &
         EOF
