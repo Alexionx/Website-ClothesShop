@@ -45,11 +45,22 @@ jobs:
 
       - name: Copy Docker image to EC2 # Копіює Dockerfile на EC2
         run: |
-          scp -o StrictHostKeyChecking=no -r ./Dockerfile ubuntu@${{ env.EC2_PUBLIC_IP }}:/home/ubuntu/
+          scp -o StrictHostKeyChecking=no -r ./Dockerfile ec2_user@${{ env.EC2_PUBLIC_IP }}:/home/ubuntu/
 
       - name: Build and run Docker container on EC2 #Створює Docker-образ і запускає контейнер на EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@${{ env.EC2_PUBLIC_IP }} << 'EOF'
-            docker build -t website-clothesshop-server /home/ubuntu/
+          ssh -o StrictHostKeyChecking=no ec2_user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
+            docker build -t website-clothesshop-server /home/ec2_user/
             docker run -d -p 3000:3000 website-clothesshop-server
+          EOF
+      
+      - name: Deploy to EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
+          cd /home/ec2-user/Website-ClothesShop
+          git pull
+          npm install
+
+          pkill node
+          nohup node app.js > output.log 2>&1 &
           EOF
