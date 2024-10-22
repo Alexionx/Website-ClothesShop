@@ -41,10 +41,6 @@ resource "aws_ssm_parameter" "ec2_public_ip" {
   name  = "/my_app/ec2_public_ip" # Назва параметра
   type  = "String"
   value = aws_instance.app_server.public_ip
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 
