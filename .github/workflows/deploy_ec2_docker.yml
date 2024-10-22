@@ -46,7 +46,9 @@ jobs:
 
       - name: Copy Docker image to EC2 # Копіює Dockerfile на EC2
         run: |
-          scp -i /Users/sashamelnyk/Desktop/aws/devops-practice-test-key.pem -o StrictHostKeyChecking=no -r ./Dockerfile ec2-user@${{ env.EC2_PUBLIC_IP }}:/home/ec2-user/
+          scp -o StrictHostKeyChecking=no -r ./Dockerfile ec2-user@${{ env.EC2_PUBLIC_IP }}:/home/ec2-user/
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }} # підключення через ssh для копіювання
 
       - name: Build and run Docker container on EC2 #Створює Docker-образ і запускає контейнер на EC2
         run: |
