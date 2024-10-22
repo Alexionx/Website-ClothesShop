@@ -50,14 +50,29 @@ jobs:
         env:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }} # підключення через ssh для копіювання
 
-      - name: Build and run Docker container on EC2 #Створює Docker-образ і запускає контейнер на EC2
+      - name: Build and run Docker container on EC2 # Створює Docker-образ і запускає контейнер на EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
-            cd /home/ec2-user/Website-ClothesShop
-            git pull
-            docker build -t website-clothesshop-server .
-            docker stop $(docker ps -q --filter ancestor=website-clothesshop-server)
-            docker run -d -p 3000:3000 website-clothesshop-server
-          EOF
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'  
+     # Перевіряємо, чи існує каталог, і створюємо його, якщо потрібно
+          mkdir -p /home/ec2-user/Website-ClothesShop
+          cd /home/ec2-user/Website-ClothesShop || exit
 
+    # Встановлюємо Git, якщо він ще не встановлений
+          if ! command -v git &> /dev/null; then
+            sudo yum install git -y
+          fi
 
+    # Встановлюємо Docker, якщо він ще не встановлений
+          if ! command -v docker &> /dev/null; then
+            sudo amazon-linux-extras install docker -y
+            sudo service docker start
+            sudo usermod -aG docker ec2-user  # Додати користувача до групи docker
+            newgrp docker  # Застосувати зміни групи
+          fi
+
+          git pull # Оновлюємо код з репозиторію
+
+          docker build -t website-clothesshop-server . # Створюємо Docker-образ
+          docker stop $(docker ps -q --filter ancestor=website-clothesshop-server) || true # Зупиняємо контейнер, якщо він запущений
+          docker run -d -p 3000:3000 website-clothesshop-server # Запускаємо новий контейнер
+        EOF
