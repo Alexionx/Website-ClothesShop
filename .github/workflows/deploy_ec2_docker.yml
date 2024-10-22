@@ -35,7 +35,8 @@ jobs:
       - name: Get EC2 public IP
         id: get_ip  # Встановлюємо ID для отримання публічної IP
         run: |
-          echo "EC2_PUBLIC_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
+          EC2_PUBLIC_IP=$(aws ssm get-parameter --name "/my_app/ec2_public_ip" --query "Parameter.Value" --output text)
+          echo "EC2_PUBLIC_IP=${EC2_PUBLIC_IP}" >> $GITHUB_ENV
         working-directory: ./terraform
 
       - name: Set up SSH # Встановлює SSH-з'єднання для доступу до інстансу.
@@ -49,18 +50,12 @@ jobs:
 
       - name: Build and run Docker container on EC2 #Створює Docker-образ і запускає контейнер на EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ec2_user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
-            docker build -t website-clothesshop-server /home/ec2_user/
+          ssh -o StrictHostKeyChecking=no ubuntu@${{ env.EC2_PUBLIC_IP }} << 'EOF'
+            cd /home/ec2_user/Website-ClothesShop
+            git pull
+            docker build -t website-clothesshop-server .
+            docker stop $(docker ps -q --filter ancestor=website-clothesshop-server)
             docker run -d -p 3000:3000 website-clothesshop-server
           EOF
-      
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
-          cd /home/ec2-user/Website-ClothesShop
-          git pull
-          npm install
 
-          pkill node
-          nohup node app.js > output.log 2>&1 &
-          EOF
+

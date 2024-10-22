@@ -28,10 +28,6 @@ resource "aws_instance" "app_server" {
   }
 }
 
-output "ec2_public_ip" {
-  value = aws_instance.app_server.public_ip
-}
-
 # посилаюсь на існуючу security group
 
 data "aws_security_group" "existing_sg" {
@@ -40,4 +36,11 @@ data "aws_security_group" "existing_sg" {
     values = ["new_app_security_group"]  # Вкажіть ім'я вашої існуючої групи безпеки
   }
 }
+
+resource "aws_ssm_parameter" "ec2_public_ip" { 
+  name  = "/my_app/ec2_public_ip" # Назва параметра
+  type  = "String"
+  value = aws_instance.app_server.public_ip
+}
+
 
