@@ -52,11 +52,12 @@ jobs:
   
       - name: Build and run Docker container on EC2 #Створює Docker-образ і запускає контейнер на EC2
         run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
+            ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
+          # перевіряється чи створено каталог і створюється чи потрібно
             mkdir -p /home/ec2-user/Website-ClothesShop
             cd /home/ec2-user/Website-ClothesShop || exit
 
-        # Встановлюємо Git, якщо він ще не встановлений
+            # Встановлюємо Git, якщо він ще не встановлений
             if ! command -v git &> /dev/null; then 
               sudo yum install git -y
             fi
@@ -80,6 +81,6 @@ jobs:
 
             # Запускаємо новий контейнер
             docker run -d -p 3000:3000 website-clothesshop-server
-            EOF
+          EOF
 
 
