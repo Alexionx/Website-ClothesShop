@@ -50,9 +50,9 @@ jobs:
             mkdir -p /home/ec2-user/Website-ClothesShop
           EOF
 
-      - name: Copy Docker image and json files to EC2 # Копіює Dockerfile на EC2
+      - name: Copy Docker image and json files to EC2 # Копіює всі файли проекту './' на EC2
         run: |
-          scp -o StrictHostKeyChecking=no -r ./Dockerfile ./package.json ./package-lock.json ec2-user@${{ env.EC2_PUBLIC_IP }}:/home/ec2-user/Website-ClothesShop/
+          scp -o StrictHostKeyChecking=no -r ./  ec2-user@${{ env.EC2_PUBLIC_IP }}:/home/ec2-user/Website-ClothesShop/ 
         env:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }} # підключення через ssh для копіювання
   
