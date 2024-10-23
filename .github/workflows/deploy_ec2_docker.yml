@@ -44,6 +44,12 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
+      - name: Create directory on EC2 # Створює каталог на EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
+            mkdir -p /home/ec2-user/Website-ClothesShop
+          EOF
+
       - name: Copy Docker image and json files to EC2 # Копіює Dockerfile на EC2
         run: |
           scp -o StrictHostKeyChecking=no -r ./Dockerfile ./package.json ./package-lock.json ec2-user@${{ env.EC2_PUBLIC_IP }}:/home/ec2-user/Website-ClothesShop/
@@ -53,7 +59,6 @@ jobs:
       - name: Build and run Docker container on EC2 #Створює Docker-образ і запускає контейнер на EC2
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
-            mkdir -p /home/ec2-user/Website-ClothesShop
             cd /home/ec2-user/Website-ClothesShop || exit
 
                                                     
