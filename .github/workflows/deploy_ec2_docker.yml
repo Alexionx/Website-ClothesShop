@@ -52,8 +52,8 @@ jobs:
   
       - name: Build and run Docker container on EC2 #Створює Docker-образ і запускає контейнер на EC2
         run: |
-            ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
-            # перевіряється чи створено каталог і створюється чи потрібно
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
+        # перевіряється чи створено каталог і створюється чи потрібно
             mkdir -p /home/ec2-user/Website-ClothesShop
             cd /home/ec2-user/Website-ClothesShop || exit
 
