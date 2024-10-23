@@ -56,12 +56,12 @@ jobs:
             mkdir -p /home/ec2-user/Website-ClothesShop
             cd /home/ec2-user/Website-ClothesShop || exit
 
-        # Встановлюємо Git, якщо він ще не встановлений
+                                                    
             if ! command -v git &> /dev/null; then 
               sudo yum install git -y
             fi
 
-        # Встановлюємо Docker, якщо він ще не встановлений
+            
             if ! command -v docker &> /dev/null; then 
               sudo amazon-linux-extras install docker -y 
               sudo service docker start      
@@ -69,16 +69,13 @@ jobs:
               newgrp docker  # Застосувати зміни групи
             fi
 
-            # Оновлюємо код з репозиторію
+           
             git pull
 
-        # Створюємо Docker-образ
             docker build -t website-clothesshop-server .
 
-        # Зупиняємо контейнер, якщо він запущений
             docker stop $(docker ps -q --filter ancestor=website-clothesshop-server) || true
 
-        # Запускаємо новий контейнер
             docker run -d -p 3000:3000 website-clothesshop-server
           EOF
 
