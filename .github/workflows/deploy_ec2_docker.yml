@@ -79,7 +79,7 @@ jobs:
 
             docker build -t website-clothesshop-server .
 
-            docker stop $(docker ps -q --filter ancestor=website-clothesshop-server) || true
+            docker stop $(docker ps -q --filter "ancestor=website-clothesshop-server") || true
 
             docker run -d -p 3000:3000 website-clothesshop-server
           EOF
