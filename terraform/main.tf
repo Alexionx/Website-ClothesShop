@@ -6,6 +6,15 @@ terraform {
     }
   }
   required_version = ">= 1.2.0"
+
+  backend "s3" {
+      bucket = "application-bucket-test" # назва бакету 
+      key = "terraform/terraform.tfstate" # створює файлову систему terraform де буде находитися мій файл
+      region = "us-east-1" # вказуєм регіон
+      dynamodb_table = "terraform-state-lock" # вказуєм таблицю для запобігання одночасного доступу
+      encrypt = true # шифрування файлу 
+  }
+
 }
 
 provider "aws" {
