@@ -36,7 +36,7 @@ jobs:
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: clothesshop-task-def # name my ECS Task Definition
+          task-definition: task-def/clothesshop-task-def.json  # name my ECS Task Definition
           service: clothesshop-service # name my ECS Service
           cluster: clothesshop-cluster # name my ECS Cluster
           wait-for-service-stability: true
