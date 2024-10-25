@@ -10,20 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code #  Завантажує код з GitHub репозиторію.
+      - name: Checkout code #  uploads code from GitHub repository.
         uses: actions/checkout@v2
 
-      - name: Configure AWS credentials # Конфігурація AWS для доступу до ресурсів (ECR, EC2)
+      - name: Configure AWS credentials # configuration AWS to access resources (ECR, EC2)
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Install Terraform # Встановлює і ініціалізує Terraform для управління EC2 інстансом.
+      - name: Install Terraform # install and initalize Terraform for managament EC2 instance.
         uses: hashicorp/setup-terraform@v1
 
-      - name: Initialize Terraform # Встановлює і ініціалізує Terraform для управління EC2 інстансом.
+      - name: Initialize Terraform # install and initialize Terraform for management EC2 instance.
         run: terraform init
         working-directory: ./terraform  # вказали директорію, де знаходяться файли tf
 
