@@ -28,7 +28,7 @@ jobs:
         working-directory: ./terraform  # вказали директорію, де знаходяться файли tf
 
       - name: Apply Terraform configuration # Створює або оновлює EC2 інстанс за допомогою Terraform.
-        id: apply_terraform # додаємо ID для доступу до output
+        id: apply_terraform # add ID to access for output
         run: terraform apply -auto-approve
         working-directory: ./terraform  # вказали директорію, де знаходяться файли tf
 
