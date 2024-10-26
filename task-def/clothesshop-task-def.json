@@ -4,6 +4,7 @@
   "requiresCompatibilities": ["FARGATE"], 
   "cpu": "256",
   "memory": "512",
+  "executionRoleArn": "arn:aws:iam::545009863780:role/ecsTaskExecutionRole",
   "containerDefinitions": [
       {
           "name": "clothesshop",
