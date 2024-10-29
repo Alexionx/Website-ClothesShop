@@ -20,11 +20,11 @@ To successfully use this project, you will need:
 
 ### Tools and services
 
--**Terraform** - to manage infrastructure as code
--**GitHub Actions** - for CI/CD process
--**Docker** and **ECS** - for containerization and orchestration
--**Amazon EC2** - for server solutions
--**S3** and **ECR** - for storing Terraform states and storing Docker Images
+- **Terraform** - to manage infrastructure as code
+- **GitHub Actions** - for CI/CD process
+- **Docker** and **ECS** - for containerization and orchestration
+- **Amazon EC2** - for server solutions
+- **S3** and **ECR** - for storing Terraform states and storing Docker Images
 
 ---
 
