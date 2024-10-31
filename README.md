@@ -1,6 +1,6 @@
 # Automated deployments on AWS 
 ## Project description
-This project includes detailed instructions on setting up automated deployments of different types of AWS infrastructure and services. A total of 5 different deployment methods have been implemented for different usage scenarios, both manually and with automation via CI/CD.
+This projectи includes detailed instructions on setting up automated deployments of different types of AWS infrastructure and services. A total of 5 different deployment methods have been implemented for different usage scenarios, both manually and with automation via CI/CD.
 
 ## Content
 1. [Prerequisites](#prerequisities)
@@ -30,6 +30,7 @@ To successfully use this project, you will need:
 
 ### Description of deployments
 
+1. **Deploy to EC2** - Describes how to deploy a simple application to a single EC2 instance using GitHub Actions
 
 ---
 
