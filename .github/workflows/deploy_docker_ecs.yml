@@ -3,7 +3,7 @@ name: Deploy to ECS with Docker
 on:
   push:
     branches:
-      - dont-deploy
+      - master
 
 jobs:
   deploy:
@@ -33,7 +33,7 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Deploy to ECS
+      - name: Deploy to ECS (EC2 launch type)
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: task-def/clothesshop-task-def.json  # name my ECS Task Definition
