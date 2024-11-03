@@ -1,14 +1,13 @@
 {
   "family": "clothesshop-task",
   "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"], 
   "cpu": "256",
   "memory": "512",
   "executionRoleArn": "arn:aws:iam::545009863780:role/ecsTaskExecutionRole",
   "containerDefinitions": [
       {
           "name": "clothesshop",
-          "image": "545009863780.dkr.ecr.us-east-1.amazonaws.com/website-clothesshop-server:latest",
+          "image": "545009863780.dkr.ecr.us-east-1.amazonaws.com/website-clothesshop:latest",
           "essential": true,
           "portMappings": [
               {
