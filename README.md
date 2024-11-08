@@ -121,8 +121,7 @@ jobs:
         alias /home/ec2-user/Website-ClothesShop/views/;  # Шлях до папки 'views'
         autoindex on;
     }
-   }
-```
+   }```
 
 - Restart nginx ``` sudo systemctl restart nginx ```
 
