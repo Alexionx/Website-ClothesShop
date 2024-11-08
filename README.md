@@ -124,5 +124,5 @@ jobs:
    }
 ```
 
-      - Restart nginx ``` sudo systemctl restart nginx ```
+   - Restart nginx ``` sudo systemctl restart nginx ```
 
