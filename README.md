@@ -458,6 +458,83 @@ jobs:
           EOF
 ```
 
-## Deploy to EC2 with Docker
+## Deploy Docker on ECS
 
-**Description**: application deployment on one EC2 instance with automation via Terraform
+**Description**: application deployment on one ECS, type - instance, with automation via GitHub Actions
+
+1. **Created private repositori in ECR for storage Docker Image**
+2. **Created cluster in ECS(type EC2) ,which will be used to deploy Docker container**
+3. **Created AIM Role for permission ECS working with differents services AWS(ECR, logs, network resources)**
+   ```
+   "Effect": "Allow",
+			"Action": [
+				"ecr:BatchCheckLayerAvailability",
+				"ecr:CompleteLayerUpload",
+				"ecr:InitiateLayerUpload",
+				"ecr:PutImage",
+				"ecr:UploadLayerPart",
+				"ecr:DescribeRepositories",
+				"ecr:CreateRepository",
+				"ecr:GetAuthorizationToken"
+			],
+   "Effect": "Allow",
+			"Action": [
+				"ecs:RegisterTaskDefinition",
+				"ecs:DescribeTaskDefinition",
+				"ecs:ListClusters",
+				"ecs:UpdateService",
+				"ecs:DescribeServices"
+			],
+   ```
+4. **Created Task Definition, which contains settings for container, includes name, image, resources and network configuration**
+5. **Created ECS Service , which automatic will manage Task Definition and will provide application stability**
+
+**As a result**: we have prepared environment for deploy Docker on ECS
+
+### CI/CD automation details
+
+```
+name: Deploy to ECS with Docker
+
+on:
+  push:
+    branches:
+      - dont-deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push Docker image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: website-clothesshop # name my ECR repository
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to ECS (EC2 launch type)
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-def/clothesshop-ec2-task-def.json  # name my ECS Task Definition
+          service: clothesshop-service # name my ECS Service
+          cluster: clothesshop-cluster # name my ECS Cluster
+          wait-for-service-stability: true
+```
+
