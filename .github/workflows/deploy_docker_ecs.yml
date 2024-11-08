@@ -3,7 +3,7 @@ name: Deploy to ECS with Docker
 on:
   push:
     branches:
-      - dont-deploy
+      - master
 
 jobs:
   deploy:
@@ -39,4 +39,4 @@ jobs:
           task-definition: task-def/clothesshop-ec2-task-def.json  # name my ECS Task Definition
           service: clothesshop-service # name my ECS Service
           cluster: clothesshop-cluster # name my ECS Cluster
-          wait-for-service-stability: true
+          wait-for-service-stability: true # доки всі сервіси не будуть стабільними деплой буде працювати

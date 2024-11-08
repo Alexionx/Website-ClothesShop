@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name ${EC2_PUBLIC_IP};  # Тут можна вказати змінну з IP, якщо є можливість
+    server_name ${EC2_PUBLIC_IP};  
 
     location / {
         proxy_pass http://localhost:3000;  # Ваш Node.js додаток працює на цьому порту
