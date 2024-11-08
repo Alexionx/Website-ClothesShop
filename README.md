@@ -91,7 +91,8 @@ jobs:
    - Open nginx configuration ``` sudo nano /etc/nginx/nginx.conf```
    ## Change nginx.conf
    
-   ```server {
+   ```
+   server {
     listen 80;
     server_name ${EC2_PUBLIC_IP};  
 
@@ -129,7 +130,8 @@ jobs:
 
 ### CI/CD automation details
 
-``` on:
+```
+on:
   push:
     branches:
       - dont-deploy
@@ -169,3 +171,64 @@ jobs:
 ---
 
 ## Deploy to EC2 via Terraform
+
+**Description**: application deployment on one EC2 instance with automation via Terraform
+
+1. **File settings main.tf**
+   - Created S3 bucket to store state terraform configiration
+   ## main.tf file
+```
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.16"
+    }
+  }
+  required_version = ">= 1.2.0"
+
+  backend "s3" {
+      bucket = "application-bucket-test" # назва бакету 
+      key = "terraform/terraform.tfstate" # створює файлову систему terraform де буде находитися мій файл
+      region = "us-east-1" # вказуєм регіон
+      dynamodb_table = "terraform-state-lock" # вказуєм таблицю для запобігання одночасного доступу
+      encrypt = true # шифрування файлу 
+  }
+
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+resource "aws_instance" "app_server" {
+  ami           = "ami-00f251754ac5da7f0"
+  instance_type = "t2.micro"
+  key_name      = "devops-practice-test-key"
+  vpc_security_group_ids = [data.aws_security_group.existing_sg.id] # Прив'язка Security Group  
+
+  root_block_device {
+    volume_size = 8
+    volume_type = "gp2"
+  }
+
+  tags = {
+    Name = "WebApplication"
+  }
+}
+
+# посилаюсь на існуючу security group
+
+data "aws_security_group" "existing_sg" {
+  filter {
+    name   = "group-name"
+    values = ["new_app_security_group"]  # Вкажіть ім'я вашої існуючої групи безпеки
+  }
+}
+
+resource "aws_ssm_parameter" "ec2_public_ip" { 
+  name  = "/my_app/ec2_public_ip" # Назва параметра
+  type  = "String"
+  value = aws_instance.app_server.public_ip
+}```
+   
