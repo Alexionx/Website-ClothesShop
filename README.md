@@ -125,3 +125,4 @@ jobs:
 
 - Restart nginx ``` sudo systemctl restart nginx ```
 
+**As a result**: we have an app that always works without an additional launch
