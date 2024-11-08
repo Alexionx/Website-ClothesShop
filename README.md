@@ -90,6 +90,7 @@ jobs:
    - Run application code and connect to public ip
    - Open nginx configuration ``` sudo nano /etc/nginx/nginx.conf```
    ## Change nginx.conf
+   ```
    server {
     listen 80;
     server_name ${EC2_PUBLIC_IP};  
@@ -122,7 +123,7 @@ jobs:
     }
 
 }
-
-  - Restart nginx ``` sudo systemctl restart nginx ```
+```
+   - Restart nginx ``` sudo systemctl restart nginx ```
 
 
