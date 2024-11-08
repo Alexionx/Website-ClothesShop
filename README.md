@@ -126,3 +126,46 @@ jobs:
 - Restart nginx ``` sudo systemctl restart nginx ```
 
 **As a result**: we have an app that always works without an additional launch
+
+### CI/CD automation details
+
+``` on:
+  push:
+    branches:
+      - dont-deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no ec2-user@44.202.248.99 << 'EOF'
+          cd /home/ec2-user/Website-ClothesShop
+          git pull
+          npm install
+
+          # Перевіряємо Nginx конфігурацію
+          sudo nginx -t
+
+          # Перезапускаємо Nginx
+          sudo systemctl restart nginx
+
+          # Перезапускаємо додаток через Nginx
+          pkill node
+          nohup node app.js > output.log 2>&1 &
+        EOF
+```
+
+---
+
+## Deploy to EC2 via Terraform
