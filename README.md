@@ -131,24 +131,6 @@ jobs:
 ### CI/CD automation details
 
 ```
-on:
-  push:
-    branches:
-      - dont-deploy
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-
     - name: Deploy to EC2
       run: |
         ssh -o StrictHostKeyChecking=no ec2-user@44.202.248.99 << 'EOF'
@@ -229,19 +211,6 @@ data "aws_security_group" "existing_sg" {
 
 ### CI/CD automation details
 ```
-   on:
-  push:
-    branches:
-      - dont-deploy
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -266,19 +235,6 @@ jobs:
       run: |
         echo "EC2_PUBLIC_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
       working-directory: ./terraform
-
-
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-
-    - name: Copy Nginx configuration
-      run: |
-        export EC2_PUBLIC_IP=${{ env.EC2_PUBLIC_IP }}
-        envsubst < nginx.conf.template > nginx.conf
-        scp -o StrictHostKeyChecking=no -i /Users/sashamelnyk/Desktop/aws/devops-practice-test-key.pem nginx.conf ec2-user@$EC2_PUBLIC_IP:/etc/nginx/conf.d/website.conf
-        ssh -o StrictHostKeyChecking=no ec2-user@$EC2_PUBLIC_IP 'sudo nginx -t && sudo systemctl restart nginx'
 
     - name: Deploy to EC2
       run: |
@@ -367,58 +323,6 @@ resource "aws_ssm_parameter" "ec2_public_ip" {
 
 ### CI/CD automation details
 ```
-name: Deploy to EC2 with Docker
-
-on:
-  push:
-    branches:
-      - dont-deploy
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code #  uploads code from GitHub repository.
-        uses: actions/checkout@v2
-
-      - name: Configure AWS credentials # configuration AWS to access resources (ECR, EC2)
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Install Terraform # install and initalize Terraform for managament EC2 instance.
-        uses: hashicorp/setup-terraform@v1
-
-      - name: Initialize Terraform # install and initialize Terraform for management EC2 instance.
-        run: terraform init
-        working-directory: ./terraform  # вказали директорію, де знаходяться файли tf
-
-      - name: Apply Terraform configuration # Створює або оновлює EC2 інстанс за допомогою Terraform.
-        id: apply_terraform # add ID to access for output
-        run: terraform apply -auto-approve
-        working-directory: ./terraform  # вказали директорію, де знаходяться файли tf
-
-      - name: Get EC2 public IP
-        id: get_ip  # Встановлюємо ID для отримання публічної IP
-        run: | # отримуємо параметр ec2_public_ip
-          EC2_PUBLIC_IP=$(aws ssm get-parameter --name "/my_app/ec2_public_ip" --query "Parameter.Value" --output text) 
-          echo "EC2_PUBLIC_IP=${EC2_PUBLIC_IP}" >> $GITHUB_ENV
-        working-directory: ./terraform 
-
-      - name: Set up SSH # Встановлює SSH-з'єднання для доступу до інстансу.
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-
-      - name: Create directory on EC2 # Створює каталог  на EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ env.EC2_PUBLIC_IP }} << 'EOF'
-            mkdir -p /home/ec2-user/Website-ClothesShop
-          EOF
-
       - name: Copy Docker image and json files to EC2 # Копіює файли проекту на EC2
         run: |
           scp -o StrictHostKeyChecking=no -r ./Dockerfile ./package.json ./package-lock.json app.js ./views ec2-user@${{ env.EC2_PUBLIC_IP }}:/home/ec2-user/Website-ClothesShop/
