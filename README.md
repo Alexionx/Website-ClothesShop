@@ -1,6 +1,6 @@
 # Automated deployments on AWS 
 ## Project description
-This projects includes detailed instructions on setting up automated deployments of different types of AWS infrastructure and services. A total of 5 different deployment methods have been implemented for different usage scenarios, both manually and with automation via CI/CD.
+This projects includes detailed instructions on setting up automated deployments of different types of AWS infrastructure and services. A total of 6 different deployment methods have been implemented for different usage scenarios, both manually and with automation via CI/CD.
 
 ## Content
 1. [Prerequisites](#prerequisities)
@@ -441,4 +441,47 @@ jobs:
           cluster: clothesshop-cluster # name my ECS Cluster
           wait-for-service-stability: true
 ```
+
+## Deploy Docker via Kubernetus and Helm
+
+**Description**: Deploy and run docker image via **Kubernetus** and **Helm**
+
+1. **Install minikube**
+   ```
+	brew install minikube
+   ```
+   **Start minikube**
+   ```
+	minikube start --driver=docker
+   ```
+2. **Install helm**
+   ```
+	brew install helm
+   ```
+3. **Access to the form in the local environment**
+   ```
+	eval $(minikube docker-env)
+   ```
+   **This command will redirect Docker to use the Minikube environment**
+
+   **After that, upload your local image to Minikube**
+   ```
+	docker built -t name:latest
+   ```
+4. **Deploy your app immediately with Helm**
+   ```
+	 helm create my-app-chart
+   ```
+   **And editing helm file**
+5. **Deployed Helm chart**
+   ```
+	helm install my-node-app ./my-app-chart
+   ```
+
+   **Application access: For a local cluster (eg Minikube)**
+   ```
+	minikube service my-node-app
+   ```
+   
+
 
