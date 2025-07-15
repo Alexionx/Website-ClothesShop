@@ -114,7 +114,7 @@ Infrastructure as Code is used to ensure reproducibility and automation.
 - Create and use a shared SSH key pair for provisioning and remote access
 - Assign instance names (master-01, worker-01) for clarity during cluster setup
 
-### Kubernetes Cluster Deployment – Using Kubespray
+### Stage 3: Kubernetes Cluster Deployment – Using Kubespray
 
 **Tools: Kubespray, Ansible, SSH, Python venv**
 
