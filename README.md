@@ -29,9 +29,11 @@ To successfully use this project, you will need:
 
 ## Description of deployment
 
-### Deployment Design: GitHub Actions + Docker Hub
+### Deployment Design Overview
 
-**Description**: this setup implements the first stage of the deployment pipeline: building and publishing Docker images to Docker Hub using GitHub Actions
+**Description**: This project implements a multi-stage deployment pipeline for delivering containerized applications to AWS infrastructure with full automation and GitOps practices.
+
+## The process is broken down into the following stages:
 
 ### Stage 1: Build and Push Docker Image
 
@@ -50,7 +52,7 @@ To successfully use this project, you will need:
 
 ### Workflow
 ```
-  name: Build and Push Docker Image
+name: Build and Push Docker Image
 
 on:
   push:
