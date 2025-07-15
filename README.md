@@ -31,9 +31,9 @@ To successfully use this project, you will need:
 
 ### Deployment Design Overview
 
-**Description**: This project implements a multi-stage deployment pipeline for delivering containerized applications to AWS infrastructure with full automation and GitOps practices.
+**Description**: This instruction implements a multi-stage deployment pipeline for delivering containerized applications to AWS infrastructure with full automation and GitOps practices.
 
-## The process is broken down into the following stages:
+### The process is broken down into the following stages:
 
 ### Stage 1: Build and Push Docker Image
 
@@ -44,7 +44,7 @@ To successfully use this project, you will need:
       - DOCKERHUB_USERNAME
       - DOCKERHUB_TOKEN
 2. **Workflow logic:**
-    On every new Git tag, GitHub Actions:
+    **On every new Git tag, GitHub Actions:**
      - Check out the repository using actions/checkout
      - Set up Docker Buildx to support multi-platform builds
      - Log in to Docker Hub using stored GitHub Secrets
@@ -88,6 +88,28 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/clothesshop:${{ env.TAG }}
 ```
+### Stage 2: Infrastructure Provisioning – Create EC2 Virtual Machines
 
+**Tools:** AWS EC2
 
+**Description:**
+At this stage, virtual machines are provisioned in AWS to serve as nodes for the future Kubernetes cluster.
+Infrastructure as Code is used to ensure reproducibility and automation.
 
+1. **Provisioned resources:**
+- master-01 – primary control-plane node for Kubernetes
+- worker-01 – worker node to run application workloads
+
+2. **Minimal recommended instance types:**
+- t2.medium or t3.medium (2 vCPU, 4 GB RAM) for both nodes
+
+3. **Key setup steps include:**
+- Launch two EC2 instances in the AWS Console
+- Use SSH tunneling for access
+- Configure Security Groups to allow:
+  - Port 22 for SSH access
+  - Port 6443 for Kubernetes API
+  - Port 80 for HTTP traffic
+  - Port 443 for HTTPS traffic
+- Create and use a shared SSH key pair for provisioning and remote access
+- Assign instance names (master-01, worker-01) for clarity during cluster setup
