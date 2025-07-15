@@ -1,4 +1,4 @@
-# Automated deployments on AWS
+# Automated Kubernetes deployments on AWS using GitOps
 ## Project description
 This project uses Kubespray to deploy a Kubernetes cluster on AWS, with Flux implementing GitOps-based automated cluster and application management.
 
