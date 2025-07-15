@@ -118,7 +118,7 @@ Infrastructure as Code is used to ensure reproducibility and automation.
 
 **Tools: Kubespray, Ansible, SSH, Python venv**
 
-**Deployment model: From local machine via Ansible → to EC2 instances on AWS**
+**Deployment model:** From local machine via Ansible → to EC2 instances on AWS
 
 1. **Prerequisites**
 - 2 running EC2 instances (Ubuntu-based), with public IPs
@@ -189,11 +189,25 @@ all:
       hosts: {}
 ```
 
-4. **4. Deploy the cluster**
+4. **Deploy the cluster**
 ```
   ansible-playbook -i inventory/cluster/hosts.yaml cluster.yml -b -v \
   --user=ubuntu \
   --private-key=~/.ssh/aws-key.pem
+```
+
+5. **Create config in master node**
+```
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  kubectl config view
+```
+
+**After that**
+```
+  kubectl get nodes
 ```
 
 **If successful, you'll have a fully working Kubernetes cluster:**
@@ -201,3 +215,49 @@ all:
 - 1 worker node (worker-01)
 - Calico CNI installed by default
 - kubectl config ready in ~/.kube/config (or inside cluster if accessed remotely)
+
+
+### Stage 4: GitOps Deployment with Flux
+
+**Tools: Flux, GitHub, Kubernetes, SSH**
+
+**Deployment model:** Flux is installed inside the cluster to continuously sync workloads from a Git repository
+
+**Step-by-Step Setup**
+
+1. **Install Flux CLI on the master node**
+- Connect to your master node (master-01) and run:
+ - ```
+    curl -s https://fluxcd.io/install.sh | sudo bash
+
+    flux --version
+
+    flux install
+   ```
+2. **Generate a GitHub Personal Access Token**
+- Actions - Read/Write
+- Administration - Read/Write
+- Contents - Read/Write
+
+**Save the token securely — it will be used during bootstrap!**
+
+3. **Bootstrap your GitHub repository with Flux**
+- On the master node, run:
+  - ```
+      flux bootstrap github \
+      --owner=<your-github-username> \
+      --repository=<your-repo-name> \
+      --branch=main \
+      --path=clusters/prod \
+      --personal
+    ```
+- --owner — your GitHub username
+- --repository — the repo to store manifests
+- --path — the folder where Flux will look for Kustomization.yaml and other YAMLs
+
+**After running the command, Flux will prompt for the GitHub token — paste the one you created.**
+
+**Flux will:**
+- Push default manifests and GitOps structure to your repo (clusters/prod)
+- Install source, kustomization
+- Watch the specified path and automatically apply any new changes
