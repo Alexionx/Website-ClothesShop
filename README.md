@@ -107,9 +107,97 @@ Infrastructure as Code is used to ensure reproducibility and automation.
 - Launch two EC2 instances in the AWS Console
 - Use SSH tunneling for access
 - Configure Security Groups to allow:
-  - Port 22 for SSH access
-  - Port 6443 for Kubernetes API
+  - Port 22 for SSH access **(only your ip)**
+  - Port 6443 for Kubernetes API **(only your ip)**
   - Port 80 for HTTP traffic
   - Port 443 for HTTPS traffic
 - Create and use a shared SSH key pair for provisioning and remote access
 - Assign instance names (master-01, worker-01) for clarity during cluster setup
+
+### Kubernetes Cluster Deployment – Using Kubespray
+
+**Tools: Kubespray, Ansible, SSH, Python venv**
+
+**Deployment model: From local machine via Ansible → to EC2 instances on AWS**
+
+1. **Prerequisites**
+- 2 running EC2 instances (Ubuntu-based), with public IPs
+- SSH key with access to both instances (e.g. ~/.ssh/aws-key.pem)
+- Opened ports: 22, 6443, optionally 80/443 for ingress
+- Docker image in Docker Hub (from Stage 1)
+
+**Step-by-Step Deployment**
+
+1. **Install pipx and Ansible-core (2.17.3)**
+```
+  brew install pipx
+  pipx ensurepath
+  pipx install ansible-core==2.17.3
+
+  ansible --version
+```
+
+2. **Clone Kubespray and set up project**
+```
+  cd ~/Desktop
+  mkdir kubespray-cluster && cd kubespray-cluster
+
+  git clone https://github.com/kubernetes-sigs/kubespray.git
+  cd kubespray
+
+  Create and activate a virtual environment:
+
+  python3 -m venv venv
+  source venv/bin/activate
+  pip install -r requirements.txt
+
+```
+3. **Prepare inventory**
+```
+  cp -rfp inventory/sample inventory/cluster
+  touch inventory/cluster/hosts.yaml
+```
+
+**Fill in inventory/cluster/hosts.yaml like this:**
+
+```
+all:
+  hosts:
+    master1:
+      ansible_host: 18.111.111.111     # public IP of master
+      ip: 10.0.1.10                    # private IP or same as public if needed
+      access_ip: 18.111.111.111        # private IP or same as public if needed
+    worker1:
+      ansible_host: 18.222.222.222     # public IP of worker
+      ip: 10.0.1.11                    # private IP or same as public if needed
+      access_ip: 18.222.222.222        # private IP or same as public if needed
+  children:
+    kube_control_plane:
+      hosts:
+        master1:
+    kube_node:
+      hosts:
+        worker1:
+    etcd:
+      hosts:
+        master1:
+    k8s_cluster:
+      children:
+        kube_control_plane:
+        kube_node:
+    calico_rr:
+      hosts: {}
+```
+
+4. **4. Deploy the cluster**
+```
+  ansible-playbook -i inventory/cluster/hosts.yaml cluster.yml -b -v \
+  --user=ubuntu \
+  --private-key=~/.ssh/aws-key.pem
+```
+
+**If successful, you'll have a fully working Kubernetes cluster:**
+- 1 master node (master-01)
+- 1 worker node (worker-01)
+- Calico CNI installed by default
+- kubectl config ready in ~/.kube/config (or inside cluster if accessed remotely)
