@@ -261,3 +261,5 @@ all:
 - Push default manifests and GitOps structure to your repo (clusters/prod)
 - Install source, kustomization
 - Watch the specified path and automatically apply any new changes
+
+### Stage 5: 

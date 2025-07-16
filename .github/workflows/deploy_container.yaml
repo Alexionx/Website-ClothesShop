@@ -4,7 +4,7 @@ on:
   push:
     branches: ["k8s"]
     tags:
-      - 'v*'
+      - '*'
 
 jobs:
   build-and-push:
